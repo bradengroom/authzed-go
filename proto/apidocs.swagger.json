@@ -27,10 +27,10 @@
       "name": "SchemaService"
     },
     {
-      "name": "WatchService"
+      "name": "StatsService"
     },
     {
-      "name": "SchemaService"
+      "name": "WatchService"
     },
     {
       "name": "WatchResourcesService"
@@ -184,6 +184,40 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/v1CheckPermissionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PermissionsService"
+        ]
+      }
+    },
+    "/v1/permissions/checkbulk": {
+      "post": {
+        "summary": "CheckBulkPermissions evaluates the given list of permission checks\nand returns the list of results.",
+        "operationId": "PermissionsService_CheckBulkPermissions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CheckBulkPermissionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "CheckBulkPermissionsRequest issues a check on whether a subject has permission \nor is a member of a relation on a specific resource for each item in the list.\n\nThe ordering of the items in the response is maintained in the response.\nChecks with the same subject/permission will automatically be batched for performance optimization.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CheckBulkPermissionsRequest"
             }
           }
         ],
@@ -489,6 +523,88 @@
         ],
         "tags": [
           "SchemaService"
+        ]
+      }
+    },
+    "/v1/stats/getrelationshipcardinality": {
+      "post": {
+        "operationId": "StatsService_GetRelationshipCardinality",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1GetRelationshipCardinalityResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1GetRelationshipCardinalityResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetRelationshipCardinalityRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StatsService"
+        ]
+      }
+    },
+    "/v1/stats/updaterelationshipcardinality": {
+      "post": {
+        "operationId": "StatsService_UpdateRelationshipCardinality",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/v1UpdateRelationshipCardinalityResponse"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of v1UpdateRelationshipCardinalityResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateRelationshipCardinalityRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StatsService"
         ]
       }
     },
@@ -1103,6 +1219,79 @@
       },
       "description": "BulkImportRelationshipsResponse is returned on successful completion of the\nbulk load stream, and contains the total number of relationships loaded."
     },
+    "v1CheckBulkPermissionsPair": {
+      "type": "object",
+      "properties": {
+        "request": {
+          "$ref": "#/definitions/v1CheckBulkPermissionsRequestItem"
+        },
+        "item": {
+          "$ref": "#/definitions/v1CheckBulkPermissionsResponseItem"
+        },
+        "error": {
+          "$ref": "#/definitions/rpcStatus"
+        }
+      }
+    },
+    "v1CheckBulkPermissionsRequest": {
+      "type": "object",
+      "properties": {
+        "consistency": {
+          "$ref": "#/definitions/v1Consistency"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1CheckBulkPermissionsRequestItem"
+          }
+        }
+      },
+      "description": "CheckBulkPermissionsRequest issues a check on whether a subject has permission \nor is a member of a relation on a specific resource for each item in the list.\n\nThe ordering of the items in the response is maintained in the response.\nChecks with the same subject/permission will automatically be batched for performance optimization."
+    },
+    "v1CheckBulkPermissionsRequestItem": {
+      "type": "object",
+      "properties": {
+        "resource": {
+          "$ref": "#/definitions/v1ObjectReference"
+        },
+        "permission": {
+          "type": "string"
+        },
+        "subject": {
+          "$ref": "#/definitions/v1SubjectReference"
+        },
+        "context": {
+          "type": "object"
+        }
+      }
+    },
+    "v1CheckBulkPermissionsResponse": {
+      "type": "object",
+      "properties": {
+        "checkedAt": {
+          "$ref": "#/definitions/v1ZedToken"
+        },
+        "pairs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1CheckBulkPermissionsPair"
+          }
+        }
+      }
+    },
+    "v1CheckBulkPermissionsResponseItem": {
+      "type": "object",
+      "properties": {
+        "permissionship": {
+          "$ref": "#/definitions/v1CheckPermissionResponsePermissionship"
+        },
+        "partialCaveatInfo": {
+          "$ref": "#/definitions/v1PartialCaveatInfo"
+        }
+      }
+    },
     "v1CheckPermissionRequest": {
       "type": "object",
       "properties": {
@@ -1277,6 +1466,23 @@
         "treeRoot": {
           "$ref": "#/definitions/v1PermissionRelationshipTree",
           "description": "tree_root is a tree structure whose leaf nodes are subjects, and\nintermediate nodes represent the various operations (union, intersection,\nexclusion) to reach those subjects."
+        }
+      }
+    },
+    "v1GetRelationshipCardinalityRequest": {
+      "type": "object",
+      "properties": {
+        "relationship": {
+          "$ref": "#/definitions/v1Relationship"
+        }
+      }
+    },
+    "v1GetRelationshipCardinalityResponse": {
+      "type": "object",
+      "properties": {
+        "cardinality": {
+          "type": "number",
+          "format": "double"
         }
       }
     },
@@ -1654,6 +1860,17 @@
         }
       },
       "title": "SubjectReference is used for referring to the subject portion of a\nRelationship. The relation component is optional and is used for defining a\nsub-relation on the subject, e.g. group:123#members"
+    },
+    "v1UpdateRelationshipCardinalityRequest": {
+      "type": "object",
+      "properties": {
+        "relationship": {
+          "$ref": "#/definitions/v1Relationship"
+        }
+      }
+    },
+    "v1UpdateRelationshipCardinalityResponse": {
+      "type": "object"
     },
     "v1WatchRequest": {
       "type": "object",

@@ -1,6 +1,6 @@
 package v0
 
 const (
-	BufRepository = "buf.build/authzed/api"
-	BufTag        = "14854970e303a3b8e2f9f53efbab9897b5c8f2b1"
+	BufRepository = "buf.build/braden/spicedb-api"
+	BufTag        = "a26fc4254b2b1dc2290e5d47dbf70e7abebba0ba"
 )
